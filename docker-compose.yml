@@ -1,0 +1,15 @@
+services:
+  bot:
+    build: ./bot
+
+  api:
+    container_name: fastapi
+    build: ./api
+    ports:
+      - "8000:8000"
+
+  ssh-tunnel:
+    build: ./ssh_tunnel
+    container_name: ssh_tunnel
+    command: 
+      ssh -o StrictHostKeyChecking=no -R 80:api:8000 plan@localhost.run
