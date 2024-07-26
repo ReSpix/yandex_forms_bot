@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import sys
+import requests
 
 from aiogram import F, Bot, Dispatcher, html
 from aiogram.client.default import DefaultBotProperties
@@ -19,8 +20,16 @@ bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
     await message.answer(
-        f"Этот бот получает ответы из Яндекс формы.\nСостояние бота: Активен"
+        f"Этот бот получает ответы из Яндекс формы.\nСостояние бота: Активен."
     )
+    service_status = 'Неактивно'
+    try:
+        res = requests.get('https://testyandexformstgbot.serveo.net/status')
+        if 'ok' in res.text:
+            service_status = 'Активно'
+    except:
+        pass
+    await message.answer(f"Состояние сервсиса: {service_status}")
 
 
 @dp.callback_query(F.data == "take")
@@ -66,11 +75,7 @@ async def refure_task(callback: CallbackQuery):
 
 @dp.message(F.text)
 async def any_message(message: Message):
-    print('Получено:', message.text, message.from_user.first_name)
-    my_name = await bot.get_my_name()
-    my_name = my_name.name
-    if message.from_user.is_bot:
-        print('Это был бот')
+    print(f'Сообщение: "{message.text}" от {message.from_user.username}')
 
 
 async def main() -> None:

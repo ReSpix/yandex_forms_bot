@@ -12,4 +12,8 @@ services:
     build: ./ssh_tunnel
     container_name: ssh_tunnel
     command: 
-      ssh -o StrictHostKeyChecking=no -R 80:api:8000 plan@localhost.run
+      # localhost.run: randomly changing url
+      # ssh -o StrictHostKeyChecking=no -R 80:api:8000 plan@localhost.run
+
+      # (recomended) serveo.net: requires ssh key registration
+      ssh -o StrictHostKeyChecking=no -R testyandexformstgbot:80:api:8000 serveo.net

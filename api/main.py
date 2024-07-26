@@ -4,10 +4,10 @@ app = FastAPI()
 
 @app.get("/status")
 def status():
-    return {"Im": "Ok"}
+    return {"Im, ok"}
 
 
 @app.get('/receive/{text}')
 def receive(text):
     print(text)
-    return {"OK"}
+    return {"Received succesfully"}
