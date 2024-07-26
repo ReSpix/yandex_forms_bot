@@ -11,7 +11,8 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from key import TOKEN
 
-from buttons import get_new_text
+from buttons import get_new_text, get_original_text
+from urllib.parse import quote
 
 dp = Dispatcher()
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
@@ -44,6 +45,14 @@ async def command_start_handler(message: Message) -> None:
     await message.answer(
         f"Команда статус показывает 2 статуса: бот и сервис.\n\n🤖 Бот отвечает за работу кнопок в сообщениях.\n\n💻 Сервис отвечает за уведомление о сообщениях, на которые не было ответов в течении суток.\n\nP.S. Даже если и бот, и сервис неактивны, сообщения из Яндекс форм все равно будут приходить (но кнопки работать не будут)"
     )
+    
+
+def save_response(text, username, type):
+    text = get_original_text(text)
+    text = quote(text)
+    url = f'http://api:8000/response/{text}/{username}/{type}'
+    res = requests.get(url)
+    return res.text
 
 
 @dp.callback_query(F.data == "take")
@@ -59,6 +68,7 @@ async def accept_task(callback: CallbackQuery):
         get_new_text(callback.message.text, f"Взято в работу"),
         reply_markup=inline_kb,
     )
+    save_response(callback.message.text, callback.from_user.username, 'take')
 
 
 @dp.callback_query(F.data == "call")
@@ -71,13 +81,15 @@ async def refure_task(callback: CallbackQuery):
         get_new_text(callback.message.text, f"Позвонили клиенту"),
         reply_markup=inline_kb,
     )
-
+    res = save_response(callback.message.text, callback.from_user.username, 'call')
+    await callback.message.answer(res)
 
 @dp.callback_query(F.data == "accept")
 async def refure_task(callback: CallbackQuery):
     await callback.message.edit_text(
         get_new_text(callback.message.text, f"Клиент принял работу")
     )
+    save_response(callback.message.text, callback.from_user.username, 'accept')
 
 
 @dp.callback_query(F.data == "refuse")
@@ -85,6 +97,7 @@ async def refure_task(callback: CallbackQuery):
     await callback.message.edit_text(
         get_new_text(callback.message.text, f"Клиент отказался")
     )
+    save_response(callback.message.text, callback.from_user.username, 'refuse')
 
 
 @dp.message(F.text)

@@ -47,3 +47,22 @@ class RequestResponse(BaseModel):
 
     class Config:
         orm_mode = True
+        
+        
+class ResponseResponse(BaseModel):
+    id: int
+    request_id: int
+    employee_name: str
+    responded_at: datetime
+    response_type: str
+
+    class Config:
+        orm_mode = True
+        
+    
+class TypeResponse(BaseModel):
+    id: int
+    type_text: str
+
+    class Config:
+        orm_mode = True

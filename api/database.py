@@ -20,7 +20,7 @@ def init_db():
 
 
 def initialize_response_types(db):
-    response_types = ["work", "call", "accept", "refuse"]
+    response_types = ["take", "call", "accept", "refuse"]
     existing_types = db.query(ResponseType).count()
     if existing_types == 0:
         for type_text in response_types:

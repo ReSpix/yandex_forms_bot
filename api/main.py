@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models import Request, RequestResponse
+from models import Request, RequestResponse, ResponseType, Response, ResponseResponse, TypeResponse
 from database import get_db, init_db
 from typing import List
 
@@ -23,7 +23,57 @@ def receive(text: str, db: Session = Depends(get_db)):
     return {"Received succesfully"}
 
 
+@app.get("/response/{text}/{name}/{response_type_text}")
+def save_response(
+    text: str, name: str, response_type_text: str, db: Session = Depends(get_db)
+):
+    # Ищем запрос по тексту
+    request = db.query(Request).filter(Request.text == text).first()
+
+    if not request:
+        raise HTTPException(status_code=404, detail="Request not found")
+
+    # Ищем тип ответа по тексту
+    response_type = (
+        db.query(ResponseType)
+        .filter(ResponseType.type_text == response_type_text)
+        .first()
+    )
+
+    if not response_type:
+        raise HTTPException(status_code=404, detail="Response type not found")
+
+    # Сохраняем ответ
+    new_response = Response(
+        request_id=request.id, employee_name=name, response_type_id=response_type.id
+    )
+    db.add(new_response)
+    db.commit()
+    db.refresh(new_response)
+    return {"Response saved"}
+
+
 @app.get("/requests/", response_model=List[RequestResponse])
 def get_requests(db: Session = Depends(get_db)):
     requests = db.query(Request).all()
     return requests
+
+@app.get("/types/", response_model=List[TypeResponse])
+def get_requests(db: Session = Depends(get_db)):
+    types = db.query(ResponseType).all()
+    return types
+
+
+@app.get("/responses/", response_model=List[ResponseResponse])
+def get_responses(db: Session = Depends(get_db)):
+    responses = db.query(Response).join(ResponseType).all()
+    return [
+        ResponseResponse(
+            id=response.id,
+            request_id=response.request_id,
+            employee_name=response.employee_name,
+            responded_at=response.responded_at,
+            response_type=response.response_type.type_text
+        )
+        for response in responses
+    ]
