@@ -6,7 +6,7 @@ import requests
 from aiogram import F, Bot, Dispatcher, html
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from key import TOKEN
@@ -20,16 +20,30 @@ bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
     await message.answer(
-        f"Этот бот получает ответы из Яндекс формы.\nСостояние бота: Активен."
+        f"Этот бот присылает полученные ответы из Яндекс формы"
     )
-    service_status = 'Неактивно'
+
+
+@dp.message(Command('status'))
+async def command_start_handler(message: Message) -> None:
+    await message.answer(
+        f"(1/2) Бот: Активен ✅"
+    )
+    service_status = "Неактивен ❌"
     try:
-        res = requests.get('https://testyandexformstgbot.serveo.net/status')
-        if 'ok' in res.text:
-            service_status = 'Активно'
+        res = requests.get("https://testyandexformstgbot.serveo.net/status")
+        if "ok" in res.text:
+            service_status = "Активен ✅"
     except:
         pass
-    await message.answer(f"Состояние сервсиса: {service_status}")
+    await message.answer(f"(2/2) Сервис: {service_status}")
+
+
+@dp.message(Command('explain'))
+async def command_start_handler(message: Message) -> None:
+    await message.answer(
+        f"Команда статус показывает 2 статуса: бот и сервис.\n\n🤖 Бот отвечает за работу кнопок в сообщениях.\n\n💻 Сервис отвечает за уведомление о сообщениях, на которые не было ответов в течении суток.\n\nP.S. Даже если и бот, и сервис неактивны, сообщения из Яндекс форм все равно будут приходить (но кнопки работать не будут)"
+    )
 
 
 @dp.callback_query(F.data == "take")

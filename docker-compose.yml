@@ -7,13 +7,18 @@ services:
     build: ./api
     ports:
       - "8000:8000"
+    volumes:
+      - bot_api_db:/app/db
 
   ssh-tunnel:
     build: ./ssh_tunnel
     container_name: ssh_tunnel
-    command: 
+    command:
       # localhost.run: randomly changing url
-      # ssh -o StrictHostKeyChecking=no -R 80:api:8000 plan@localhost.run
+      # ssh -o StrictHostKeyChecking=no -R 80:api:8000 nokey@localhost.run
 
       # (recomended) serveo.net: requires ssh key registration
       ssh -o StrictHostKeyChecking=no -R testyandexformstgbot:80:api:8000 serveo.net
+
+volumes:
+  bot_api_db:
