@@ -1,3 +1,6 @@
+import requests
+from urllib.parse import quote
+
 messages_text = [
     "Взято в работу",
     "Позвонили клиенту",
@@ -25,3 +28,11 @@ def get_original_text(current_text):
         return "\n".join(txt[:-2])
 
     return current_text
+
+
+def save_response(text, username, type):
+    text = get_original_text(text)
+    text = quote(text)
+    url = f"http://api:8000/response/{text}/{username}/{type}"
+    res = requests.get(url)
+    return res.text
