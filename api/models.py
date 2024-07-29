@@ -40,7 +40,7 @@ class Response(Base):
     response_type = relationship("ResponseType", back_populates="responses")
 
 
-class RequestResponse(BaseModel):
+class RequestView(BaseModel):
     id: int
     text: str
     received_at: datetime
@@ -49,7 +49,7 @@ class RequestResponse(BaseModel):
         orm_mode = True
         
         
-class ResponseResponse(BaseModel):
+class ResponseView(BaseModel):
     id: int
     request_id: int
     employee_name: str
@@ -60,7 +60,7 @@ class ResponseResponse(BaseModel):
         orm_mode = True
         
     
-class TypeResponse(BaseModel):
+class TypeView(BaseModel):
     id: int
     type_text: str
 
