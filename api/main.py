@@ -1,6 +1,13 @@
 from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.orm import Session
-from models import Request, RequestResponse, ResponseType, Response, ResponseResponse, TypeResponse
+from sqlalchemy.orm import Session, aliased
+from models import (
+    Request,
+    RequestResponse,
+    ResponseType,
+    Response,
+    ResponseResponse,
+    TypeResponse,
+)
 from database import get_db, init_db
 from typing import List
 
@@ -58,6 +65,7 @@ def get_requests(db: Session = Depends(get_db)):
     requests = db.query(Request).all()
     return requests
 
+
 @app.get("/types/", response_model=List[TypeResponse])
 def get_requests(db: Session = Depends(get_db)):
     types = db.query(ResponseType).all()
@@ -73,7 +81,20 @@ def get_responses(db: Session = Depends(get_db)):
             request_id=response.request_id,
             employee_name=response.employee_name,
             responded_at=response.responded_at,
-            response_type=response.response_type.type_text
+            response_type=response.response_type.type_text,
         )
         for response in responses
     ]
+
+
+@app.get("/notify/", response_model=List[RequestResponse])
+def get_requests(db: Session = Depends(get_db)):
+    response_alias = aliased(Response)
+
+    requests = (
+        db.query(Request)
+        .outerjoin(response_alias, Request.id == response_alias.request_id)
+        .filter(response_alias.id.is_(None))
+        .all()
+    )
+    return requests

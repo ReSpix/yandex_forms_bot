@@ -1,6 +1,8 @@
 services:
   bot:
     build: ./bot
+    environment:
+      - TZ=Asia/Vladivostok
 
   api:
     container_name: fastapi
@@ -17,8 +19,11 @@ services:
       # localhost.run: randomly changing url
       # ssh -o StrictHostKeyChecking=no -R 80:api:8000 nokey@localhost.run
 
-      # (recomended) serveo.net: requires ssh key registration
-      ssh -o StrictHostKeyChecking=no -R testyandexformstgbot:80:api:8000 serveo.net
+      # serveo.net: not always available
+      # ssh -o StrictHostKeyChecking=no -R testyandexformstgbot:80:api:8000 serveo.net
+
+      # (recomended) PageKite
+      --defaults --service_on=http:test-forstbityandexformstgbotdev.pagekite.me:api:8000:123456
 
 volumes:
   bot_api_db:

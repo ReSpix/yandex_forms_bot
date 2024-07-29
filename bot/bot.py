@@ -28,7 +28,9 @@ async def command_start_handler(message: Message) -> None:
     await message.answer(f"(1/2) Бот: Активен ✅")
     service_status = "Неактивен ❌"
     try:
-        res = requests.get("https://testyandexformstgbot.serveo.net/status")
+        res = requests.get(
+            "https://test-forstbityandexformstgbotdev.pagekite.me/status"
+        )
         if "ok" in res.text:
             service_status = "Активен ✅"
     except:
@@ -39,7 +41,7 @@ async def command_start_handler(message: Message) -> None:
 @dp.message(Command("explain"))
 async def command_start_handler(message: Message) -> None:
     await message.answer(
-        f"Команда статус показывает 2 статуса: бот и сервис.\n\n🤖 Бот отвечает за работу кнопок в сообщениях.\n\n💻 Сервис отвечает за уведомление о сообщениях, на которые не было ответов в течении суток.\n\nP.S. Даже если и бот, и сервис неактивны, сообщения из Яндекс форм все равно будут приходить (но кнопки работать не будут)"
+        f"Команда статус показывает 2 статуса: бот и сервис.\n\n🤖 Бот отвечает за работу кнопок в сообщениях.\n\n💻 Сервис отвечает за уведомление о сообщениях, на которые не было откликов в течении суток.\n\nP.S. Даже если и бот, и сервис неактивны, сообщения из Яндекс форм все равно будут приходить (но кнопки работать не будут)"
     )
 
 
@@ -96,12 +98,55 @@ async def refure_task(callback: CallbackQuery):
     save_response(callback.message.text, callback.from_user.username, "refuse")
 
 
+@dp.message(Command("notify"))
+async def notify(message: Message):
+    button_work = InlineKeyboardButton(text="Взял в работу", callback_data="take")
+    button_call = InlineKeyboardButton(text="Позвонил клиенту", callback_data="call")
+    button_accept = InlineKeyboardButton(text="Клиент наш", callback_data="accept")
+    button_refuse = InlineKeyboardButton(text="Отказ клиента", callback_data="refuse")
+
+    inline_kb = InlineKeyboardMarkup(
+        inline_keyboard=[[button_work], [button_call], [button_accept], [button_refuse]]
+    )
+
+    url = f"http://api:8000/notify/"
+    res = requests.get(url).json()
+
+    if len(res) == 0:
+        await bot.send_message(
+            chat_id="-4226511920", text="Необработанных запросов нет"
+        )
+    else:
+        await bot.send_message(
+            chat_id="-4226511920", text=f"Необработанные запросы - {len(res)} шт:"
+        )
+        for i in res:
+            await bot.send_message(
+                chat_id="-4226511920", text=i["text"], reply_markup=inline_kb
+            )
+
+
+async def notify_scedule():
+    print("NOTIFIED")
+    await notify(None)
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.triggers.cron import CronTrigger
+
+scheduler = AsyncIOScheduler()
+scheduler.add_job(
+    notify_scedule, 'cron', hour=9, minute=30
+)
+
+
 @dp.message(F.text)
 async def any_message(message: Message):
     print(f'Сообщение: "{message.text}" от {message.from_user.username}')
 
 
 async def main() -> None:
+    scheduler.start()
     await dp.start_polling(bot)
 
 

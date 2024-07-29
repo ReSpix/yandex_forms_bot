@@ -8,4 +8,4 @@ https://api.telegram.org/bot7430156964:AAHQC0vantqdqgCRniRCbMuDc8KoFR5V6xw/sendM
 Content-Type: application/json
 
 
-https://testyandexformstgbot.serveo.net/receive/ответы на все вопросы
+https://test-forstbityandexformstgbotdev.pagekite.me/receive/ответы на все вопросы
