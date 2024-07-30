@@ -49,9 +49,6 @@ async def handle_notify(message: Message):
     await notify()
 
 async def notify():
-    if is_notify_skip():
-        return
-
     button_work = InlineKeyboardButton(text="Взял в работу", callback_data="take")
     button_call = InlineKeyboardButton(text="Позвонил клиенту", callback_data="call")
     button_accept = InlineKeyboardButton(text="Клиент наш", callback_data="accept")
