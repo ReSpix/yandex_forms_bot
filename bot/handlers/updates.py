@@ -14,9 +14,12 @@ async def set_time(message: Message):
 
     match = re.match(pattern, text)
     if match:
-        x = int(match.group(1))
-        y = int(match.group(2))
-        update_scheduler(x, y)
+        x = match.group(1)
+        y = match.group(2)
+        if int(x) > 23 or int(x) < 0 or int(y) < 0 or int(y) > 59:
+            await message.answer("Неверное значение")
+            return
+        update_scheduler(int(x), int(y))
         await message.answer(f"🕓 Время уведомлений установлено на {x}:{y}")
     else:
         await message.answer(
