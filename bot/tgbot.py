@@ -18,7 +18,7 @@ available = [
 dp = Dispatcher()
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
-chat_id = "-4289501382"
+chat_id = "-4173926615"
 
 
 async def user_in_chat(message: types.Message):

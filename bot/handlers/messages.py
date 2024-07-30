@@ -43,9 +43,12 @@ async def command_start_handler(message: Message) -> None:
 
 
 @dp.message(Command("notify"))
-async def notify(message: Message):
+async def handle_notify(message: Message):
     if not await user_in_chat(message):
         return
+    await notify()
+
+async def notify():
     if is_notify_skip():
         return
 
