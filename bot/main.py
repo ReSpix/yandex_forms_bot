@@ -3,8 +3,8 @@ import logging
 import sys
 
 from scheduler import scheduler
-from bot import dp, bot
-from handlers import messages, callbacks
+from tgbot import dp, bot
+from handlers import messages, callbacks, updates
 
 
 async def main() -> None:

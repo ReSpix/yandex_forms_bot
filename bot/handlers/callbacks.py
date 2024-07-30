@@ -2,7 +2,7 @@ from aiogram import F
 from aiogram.types import CallbackQuery
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from bot import dp
+from tgbot import dp
 from utils import get_new_text, save_response
 
 

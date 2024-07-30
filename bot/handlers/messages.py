@@ -1,15 +1,17 @@
+import re
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 import requests
-from bot import dp, bot
+from tgbot import dp, bot
 from utils import is_notify_skip
 
 
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
     await message.answer(f"Этот бот присылает полученные ответы из Яндекс формы")
+    await show_commands(message)
 
 
 @dp.message(Command("status"))
@@ -38,7 +40,7 @@ async def command_start_handler(message: Message) -> None:
 async def notify(message: Message):
     if is_notify_skip():
         return
-    
+
     button_work = InlineKeyboardButton(text="Взял в работу", callback_data="take")
     button_call = InlineKeyboardButton(text="Позвонил клиенту", callback_data="call")
     button_accept = InlineKeyboardButton(text="Клиент наш", callback_data="accept")
@@ -62,3 +64,11 @@ async def notify(message: Message):
             await bot.send_message(
                 chat_id=chat_id, text=i["text"], reply_markup=inline_kb
             )
+
+
+@dp.message(Command("commands"))
+async def show_commands(message: Message):
+    commands = await bot.get_my_commands()
+    text = [f'/{a.command} - {a.description}' for a in commands]
+    text.insert(0, 'Команды бота:')
+    await message.answer('\n'.join(text))

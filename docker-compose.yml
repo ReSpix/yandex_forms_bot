@@ -3,6 +3,8 @@ services:
     build: ./bot
     environment:
       - TZ=Asia/Vladivostok
+    volumes:
+    - bot_settings:/app/settings
 
   api:
     container_name: fastapi
@@ -27,3 +29,4 @@ services:
 
 volumes:
   bot_api_db:
+  bot_settings:
