@@ -6,6 +6,7 @@ from scheduler import scheduler
 from bot import dp, bot
 from handlers import messages, callbacks
 
+
 async def main() -> None:
     scheduler.start()
     await dp.start_polling(bot)

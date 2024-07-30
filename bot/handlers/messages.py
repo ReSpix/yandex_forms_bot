@@ -4,6 +4,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 import requests
 from bot import dp, bot
+from utils import is_notify_skip
 
 
 @dp.message(CommandStart())
@@ -29,13 +30,15 @@ async def command_start_handler(message: Message) -> None:
 @dp.message(Command("explain"))
 async def command_start_handler(message: Message) -> None:
     await message.answer(
-        f"Команда статус показывает 2 статуса: бот и сервис.\n\n🤖 Бот отвечает за работу кнопок в сообщениях.\n\n💻 Сервис отвечает за уведомление о сообщениях, на которые не было откликов в течении суток.\n\nP.S. Даже если и бот, и сервис неактивны, сообщения из Яндекс форм все равно будут приходить (но кнопки работать не будут)"
+        f"Команда статус показывает 2 статуса: бот и сервис.\n\n🤖 Бот отвечает за работу кнопок в сообщениях.\n\n💻 Сервис отвечает за уведомление о сообщениях, на которые нет отклика.\n\nP.S. Даже если и бот, и сервис неактивны, сообщения из Яндекс форм все равно будут приходить (но кнопки работать не будут)"
     )
-
 
 
 @dp.message(Command("notify"))
 async def notify(message: Message):
+    if is_notify_skip():
+        return
+    
     button_work = InlineKeyboardButton(text="Взял в работу", callback_data="take")
     button_call = InlineKeyboardButton(text="Позвонил клиенту", callback_data="call")
     button_accept = InlineKeyboardButton(text="Клиент наш", callback_data="accept")

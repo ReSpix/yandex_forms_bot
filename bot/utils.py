@@ -1,5 +1,7 @@
+from datetime import datetime
 import requests
 from urllib.parse import quote
+from settings import CONFIG
 
 messages_text = [
     "Взято в работу",
@@ -36,3 +38,20 @@ def save_response(text, username, type):
     url = f"http://api:8000/response/{text}/{username}/{type}"
     res = requests.get(url)
     return res.text
+
+
+def is_notify_skip():
+    global_skip = not CONFIG['notify']
+    weekend_skip = CONFIG["skip_weekends"] and is_weekend(datetime.now())
+    
+    if global_skip:
+        return True
+    elif weekend_skip:
+        return True
+    
+    return False
+
+
+def is_weekend(date):
+    day_of_week = date.weekday()
+    return day_of_week == 5 or day_of_week == 6
