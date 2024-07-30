@@ -3,12 +3,14 @@ from aiogram.types import Message
 from scheduler import update_scheduler
 import re
 
-from tgbot import dp
+from tgbot import dp, user_in_chat
 from settings import CONFIG, save_config
 
 
 @dp.message(Command("settime"))
 async def set_time(message: Message):
+    if not await user_in_chat(message):
+        return
     pattern = r"^/settime (\d+):(\d+)$"
     text = message.text
 
@@ -23,12 +25,14 @@ async def set_time(message: Message):
         await message.answer(f"🕓 Время уведомлений установлено на {x}:{y}")
     else:
         await message.answer(
-            "Для установки времени уведомления отправьте сообщение:\n\n/settime x:y\n\nгде 'x' часы (в 24 часовом формате), 'y' минуты"
+            "Для установки времени уведомления отправьте сообщение:\n\n/settime x:y\n\nгде «x» часы (в 24 часовом формате), «y» минуты"
         )
 
 
 @dp.message(Command("setnotify"))
 async def set_time(message: Message):
+    if not await user_in_chat(message):
+        return
     CONFIG["notify"] = not CONFIG["notify"]
     save_config(CONFIG)
 
@@ -44,6 +48,8 @@ async def set_time(message: Message):
 
 @dp.message(Command("setweekends"))
 async def set_time(message: Message):
+    if not await user_in_chat(message):
+        return
     CONFIG["skip_weekends"] = not CONFIG["skip_weekends"]
     save_config(CONFIG)
 
@@ -58,6 +64,8 @@ async def set_time(message: Message):
 
 @dp.message(Command("showsettings"))
 async def set_time(message: Message):
+    if not await user_in_chat(message):
+        return
     await message.answer(
 f"""🔔 Уведомления о сообщениях без отклика: {'✅ Включены' if CONFIG['notify'] else '❌ Отключены'}
 Для изменения /setnotify
