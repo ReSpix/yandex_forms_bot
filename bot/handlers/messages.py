@@ -4,7 +4,8 @@ from aiogram.types import Message
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 import requests
-from tgbot import dp, bot, chat_id, user_in_chat
+from tgbot import dp, bot, user_in_chat
+from key import chat_id
 from utils import is_notify_skip
 
 
@@ -51,7 +52,7 @@ async def handle_notify(message: Message):
 async def notify():
     button_work = InlineKeyboardButton(text="Взял в работу", callback_data="take")
     button_call = InlineKeyboardButton(text="Позвонил клиенту", callback_data="call")
-    button_accept = InlineKeyboardButton(text="Клиент наш", callback_data="accept")
+    button_accept = InlineKeyboardButton(text="Клиент принял", callback_data="accept")
     button_refuse = InlineKeyboardButton(text="Отказ клиента", callback_data="refuse")
 
     inline_kb = InlineKeyboardMarkup(

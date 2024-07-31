@@ -1,7 +1,7 @@
 from aiogram import Bot, Dispatcher, types
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from key import TOKEN
+from key import TOKEN, chat_id
 
 from aiogram.types.chat_member_owner import ChatMemberOwner
 from aiogram.types.chat_member_administrator import ChatMemberAdministrator
@@ -17,8 +17,6 @@ available = [
 
 dp = Dispatcher()
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-
-chat_id = "-4173926615"
 
 
 async def user_in_chat(message: types.Message):

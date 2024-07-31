@@ -11,7 +11,7 @@ async def accept_task(callback: CallbackQuery):
     if not await user_in_chat_callback(callback):
         return
     button_call = InlineKeyboardButton(text="Позвонил клиенту", callback_data="call")
-    button_accept = InlineKeyboardButton(text="Клиент наш", callback_data="accept")
+    button_accept = InlineKeyboardButton(text="Клиент принял", callback_data="accept")
     button_refuse = InlineKeyboardButton(text="Отказ клиента", callback_data="refuse")
 
     inline_kb = InlineKeyboardMarkup(
@@ -28,7 +28,7 @@ async def accept_task(callback: CallbackQuery):
 async def refure_task(callback: CallbackQuery):
     if not await user_in_chat_callback(callback):
         return
-    button_accept = InlineKeyboardButton(text="Клиент наш", callback_data="accept")
+    button_accept = InlineKeyboardButton(text="Клиент принял", callback_data="accept")
     button_refuse = InlineKeyboardButton(text="Отказ клиента", callback_data="refuse")
 
     inline_kb = InlineKeyboardMarkup(inline_keyboard=[[button_accept], [button_refuse]])
