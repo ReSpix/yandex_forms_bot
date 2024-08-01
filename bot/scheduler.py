@@ -4,10 +4,10 @@ from settings import CONFIG, save_config
 from utils import is_notify_skip
 
 
-def notify_scheduler():
+async def notify_scheduler():
     if is_notify_skip():
         return
-    notify()
+    await notify()
 
 
 scheduler = AsyncIOScheduler()
