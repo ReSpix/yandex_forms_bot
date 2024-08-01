@@ -5,6 +5,7 @@ services:
       - TZ=Asia/Vladivostok
     volumes:
     - bot_settings:/app/settings
+    restart: always
 
   api:
     container_name: fastapi
@@ -13,10 +14,12 @@ services:
       - "8000:8000"
     volumes:
       - bot_api_db:/app/db
+    restart: always
 
   ssh-tunnel:
     build: ./ssh_tunnel
     container_name: ssh_tunnel
+    restart: always
     command:
       # localhost.run: randomly changing url
       # ssh -o StrictHostKeyChecking=no -R 80:api:8000 nokey@localhost.run

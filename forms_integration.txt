@@ -1,8 +1,8 @@
 https://api.telegram.org/bot7430156964:AAHQC0vantqdqgCRniRCbMuDc8KoFR5V6xw/sendMessage
 
-{"chat_id":"-4226511920",
+{"chat_id":"{id чата}",
 "text":"Ответы на все вопросы (обязательно форматирование json)",
-"reply_markup":{"inline_keyboard":[[{"text":"Взял в работу","callback_data":"take"}],[{"text":"Позвонил клиенту","callback_data":"call"}],[{"text":"Клиент наш","callback_data":"accept"}],[{"text":"Отказ клиента","callback_data":"refuse"}]]}
+"reply_markup":{"inline_keyboard":[[{"text":"Взял в работу","callback_data":"take"}],[{"text":"Позвонил клиенту","callback_data":"call"}],[{"text":"Клиент принял","callback_data":"accept"}],[{"text":"Отказ клиента","callback_data":"refuse"}]]}
 }
 
 Content-Type: application/json
