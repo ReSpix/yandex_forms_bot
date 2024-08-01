@@ -1,4 +1,4 @@
-https://api.telegram.org/bot7430156964:AAHQC0vantqdqgCRniRCbMuDc8KoFR5V6xw/sendMessage
+https://api.telegram.org/bot7350848086:AAENe3Ynw6N5ttUPllyg3VAOoPMWreVELuo/sendMessage
 
 {"chat_id":"{id чата}",
 "text":"Ответы на все вопросы (обязательно форматирование json)",
