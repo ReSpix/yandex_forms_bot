@@ -13,20 +13,25 @@ async def set_time(message: Message):
         return
     pattern = r"^/settime (\d+):(\d+)$"
     text = message.text
+    if text is None:
+        return
+
+    warning_message = "Для установки времени уведомления отправьте сообщение:\n\n/settime x:y\n\nгде «x» часы (в 24 часовом формате), «y» минуты"
 
     match = re.match(pattern, text)
     if match:
-        x = match.group(1)
-        y = match.group(2)
+        x, y = map(int, match.groups())
         if int(x) > 23 or int(x) < 0 or int(y) < 0 or int(y) > 59:
-            await message.answer("Неверное значение")
+            if int(y) < 0 or int(y) > 59:
+                warning_message = f"Неверное значение минут: {y}. " + warning_message
+            if int(x) > 23 or int(x) < 0:
+                warning_message = f"Неверное значение часов: {x}. " + warning_message
+            await message.answer(warning_message)
             return
         update_scheduler(int(x), int(y))
-        await message.answer(f"🕓 Время уведомлений установлено на {x}:{y}")
+        await message.answer(f"🕓 Время уведомлений установлено на {int(x):02}:{int(y):02} (24-часовой формат)")
     else:
-        await message.answer(
-            "Для установки времени уведомления отправьте сообщение:\n\n/settime x:y\n\nгде «x» часы (в 24 часовом формате), «y» минуты"
-        )
+        await message.answer(warning_message)
 
 
 @dp.message(Command("setnotify"))
@@ -62,12 +67,13 @@ async def set_time(message: Message):
             "📆 ✅\nУведомления о сообщениях без отклика теперь будут приходить в субботу и воскресенье.\nЧтобы изменить отправьте команду еще раз."
         )
 
+
 @dp.message(Command("showsettings"))
 async def set_time(message: Message):
     if not await user_in_chat(message):
         return
     await message.answer(
-f"""🔔 Уведомления о сообщениях без отклика: {'✅ Включены' if CONFIG['notify'] else '❌ Отключены'}
+        f"""🔔 Уведомления о сообщениях без отклика: {'✅ Включены' if CONFIG['notify'] else '❌ Отключены'}
 Для изменения /setnotify
         
 🕓 Время уведомления: {CONFIG['hour']}:{CONFIG['minute']}

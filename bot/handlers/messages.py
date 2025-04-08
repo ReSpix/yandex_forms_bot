@@ -1,18 +1,26 @@
-import re
-from aiogram.filters import CommandStart, Command
-from aiogram.types import Message
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
-import requests
-from tgbot import dp, bot, user_in_chat
+from reminders import notify
 from key import chat_id
-from utils import is_notify_skip
+from tgbot import dp, bot, user_in_chat
+import requests
+from aiogram.types import Message
+from aiogram.filters import CommandStart, Command
+from typing import Callable
+import re
+from functools import wraps
+
+
+def requires_user_in_chat(func: Callable):
+    @wraps(func)
+    async def wrapper(message: Message, *args, **kwargs):
+        if not await user_in_chat(message):
+            return
+        return await func(message, *args, **kwargs)
+    return wrapper
 
 
 @dp.message(CommandStart())
+@requires_user_in_chat
 async def command_start_handler(message: Message) -> None:
-    if not await user_in_chat(message):
-        return
     await message.answer(f"Этот бот присылает полученные ответы из Яндекс формы")
     await show_commands(message)
 
@@ -25,7 +33,7 @@ async def command_start_handler(message: Message) -> None:
     service_status = "Неактивен ❌"
     try:
         res = requests.get(
-            "https://test-forstbityandexformstgbotdev.pagekite.me/status"
+            "https://yandexformstestbot.pagekite.me/status"
         )
         if "ok" in res.text:
             service_status = "Активен ✅"
@@ -44,34 +52,9 @@ async def command_start_handler(message: Message) -> None:
 
 
 @dp.message(Command("notify"))
+@requires_user_in_chat
 async def handle_notify(message: Message):
-    if not await user_in_chat(message):
-        return
     await notify()
-
-async def notify():
-    button_work = InlineKeyboardButton(text="Взял в работу", callback_data="take")
-    button_call = InlineKeyboardButton(text="Позвонил клиенту", callback_data="call")
-    button_accept = InlineKeyboardButton(text="Клиент принял", callback_data="accept")
-    button_refuse = InlineKeyboardButton(text="Отказ клиента", callback_data="refuse")
-
-    inline_kb = InlineKeyboardMarkup(
-        inline_keyboard=[[button_work], [button_call], [button_accept], [button_refuse]]
-    )
-
-    url = f"http://api:8000/notify/"
-    res = requests.get(url).json()
-
-    if len(res) == 0:
-        await bot.send_message(chat_id=chat_id, text="Необработанных запросов нет")
-    else:
-        await bot.send_message(
-            chat_id=chat_id, text=f"Необработанные запросы - {len(res)} шт:"
-        )
-        for i in res:
-            await bot.send_message(
-                chat_id=chat_id, text=i["text"], reply_markup=inline_kb
-            )
 
 
 @dp.message(Command("commands"))

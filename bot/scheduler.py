@@ -1,19 +1,9 @@
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from handlers.messages import notify
 from settings import CONFIG, save_config
-from utils import is_notify_skip
-
-
-async def notify_scheduler():
-    if is_notify_skip():
-        return
-    await notify()
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from reminders import notify_scheduler
 
 
 scheduler = AsyncIOScheduler()
-scheduler.add_job(
-    notify_scheduler, "cron", hour=CONFIG["hour"], minute=CONFIG["minute"]
-)
 
 
 def update_scheduler(h, m):
@@ -23,3 +13,9 @@ def update_scheduler(h, m):
 
     scheduler.remove_all_jobs()
     scheduler.add_job(notify_scheduler, "cron", hour=h, minute=m)
+
+
+def activate_scheduler():
+    scheduler.add_job(
+        notify_scheduler, "cron", hour=CONFIG["hour"], minute=CONFIG["minute"])
+    scheduler.start()

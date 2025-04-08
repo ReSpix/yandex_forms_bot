@@ -2,13 +2,13 @@ import asyncio
 import logging
 import sys
 
-from scheduler import scheduler
+from scheduler import activate_scheduler
 from tgbot import dp, bot
-from handlers import messages, callbacks, updates
+import handlers
 
 
 async def main() -> None:
-    scheduler.start()
+    activate_scheduler()
     await dp.start_polling(bot)
 
 
