@@ -1,5 +1,5 @@
 from reminders import notify
-from key import chat_id
+from key import api_url
 from tgbot import dp, bot, user_in_chat
 import requests
 from aiogram.types import Message
@@ -32,9 +32,7 @@ async def command_start_handler(message: Message) -> None:
     await message.answer(f"(1/2) Бот: Активен ✅")
     service_status = "Неактивен ❌"
     try:
-        res = requests.get(
-            "https://yandexformstestbot.pagekite.me/status"
-        )
+        res = requests.get(api_url)
         if "ok" in res.text:
             service_status = "Активен ✅"
     except:
