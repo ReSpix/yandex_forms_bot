@@ -1,37 +1,22 @@
+import pytest
 from utils import is_weekend
 from datetime import datetime
 
 
-def test_weekend1():
-    date = datetime(2024, 7, 15)
+@pytest.mark.parametrize('date', [
+    datetime(2024, 7, 15),
+    datetime(2024, 7, 16),
+    datetime(2024, 7, 17),
+    datetime(2024, 7, 18),
+    datetime(2024, 7, 19)
+])
+def test_not_weekend(date):
     assert not is_weekend(date)
 
 
-def test_weekend2():
-    date = datetime(2024, 7, 16)
-    assert not is_weekend(date)
-
-
-def test_weekend3():
-    date = datetime(2024, 7, 17)
-    assert not is_weekend(date)
-
-
-def test_weekend4():
-    date = datetime(2024, 7, 18)
-    assert not is_weekend(date)
-
-
-def test_weekend5():
-    date = datetime(2024, 7, 19)
-    assert not is_weekend(date)
-
-
-def test_weekend6():
-    date = datetime(2024, 7, 20)
-    assert is_weekend(date)
-
-
-def test_weekend7():
-    date = datetime(2024, 7, 21)
+@pytest.mark.parametrize('date', [
+    datetime(2024, 7, 20),
+    datetime(2024, 7, 21)
+])
+def test_is_weekend(date):
     assert is_weekend(date)
