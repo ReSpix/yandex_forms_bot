@@ -1,2 +1,4 @@
-TOKEN = '7350848086:AAENe3Ynw6N5ttUPllyg3VAOoPMWreVELuo'
-chat_id = "-4212520379"
+import os
+
+TOKEN = os.getenv("TOKEN")
+chat_id = os.getenv("CHAT_ID")

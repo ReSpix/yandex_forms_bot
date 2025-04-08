@@ -6,6 +6,8 @@ services:
     volumes:
     - bot_settings:/app/settings
     restart: always
+    env_file:
+      - .env
 
   api:
     container_name: fastapi
@@ -28,7 +30,7 @@ services:
       # ssh -o StrictHostKeyChecking=no -R testyandexformstgbot:80:api:8000 serveo.net
 
       # (recomended) PageKite
-      --defaults --service_on=http:test-forstbityandexformstgbotdev.pagekite.me:api:8000:123456
+      --defaults --service_on=http:yandexformstestbot.pagekite.me:api:8000:cc6f9ka33aza36cka342x873z7z3ced2
 
 volumes:
   bot_api_db:
