@@ -1,6 +1,7 @@
 services:
   bot:
     build: ./bot
+    container_name: bot
     environment:
       - TZ=Asia/Vladivostok
     volumes:
@@ -8,6 +9,17 @@ services:
     restart: always
     env_file:
       - .env
+
+  nats:
+    image: nats:latest
+    container_name: nats
+    ports:
+      - "4222:4222"  # основной порт клиента
+      - "8222:8222"  # веб-интерфейс/мониторинг
+    command: >
+      -js
+      -m 8222
+    restart: always
 
   api:
     container_name: fastapi
@@ -30,7 +42,7 @@ services:
       # ssh -o StrictHostKeyChecking=no -R testyandexformstgbot:80:api:8000 serveo.net
 
       # (recomended) PageKite
-      --defaults --service_on=http:yandexformstestbot.pagekite.me:api:8000:cc6f9ka33aza36cka342x873z7z3ced2
+      --defaults --service_on=http:yandexformstestbot.pagekite.me:api:8000:cc6f9ka33aza36cka342x873z7z3ced2 --logfile=./logs.txt
 
 volumes:
   bot_api_db:
