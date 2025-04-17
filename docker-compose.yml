@@ -10,8 +10,15 @@ services:
     env_file:
       - .env
 
+  asana:
+    build:
+      dockerfile: ./asana/Dockerfile
+      context: .
+    restart: always
+    container_name: asana
+
   nats:
-    image: nats:latest
+    image: nats@sha256:031f9a7ed1e08524b3dff604bfaee5177baa95c25f039822b8d224a42373be4e
     container_name: nats
     ports:
       - "4222:4222"  # основной порт клиента
@@ -23,7 +30,9 @@ services:
 
   api:
     container_name: fastapi
-    build: ./api
+    build: 
+      dockerfile: ./api/Dockerfile
+      context: .
     ports:
       - "8000:8000"
     volumes:
