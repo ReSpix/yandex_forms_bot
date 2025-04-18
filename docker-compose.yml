@@ -26,7 +26,10 @@ services:
     command: >
       -js
       -m 8222
+      -sd /data
     restart: always
+    volumes: 
+      - nats_jetstream:/data
 
   api:
     container_name: fastapi
@@ -56,3 +59,4 @@ services:
 volumes:
   bot_api_db:
   bot_settings:
+  nats_jetstream:

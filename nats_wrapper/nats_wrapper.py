@@ -88,7 +88,10 @@ class NATSWrapper:
             logging.info(f"Поток {self.stream_name} не найден. Создаю.")
             js = await self._get_js()
             await js.add_stream(
-                config=StreamConfig(name=name, subjects=[subject])
+                config=StreamConfig(name=name,
+                                    subjects=[subject],
+                                    max_bytes=100 * 1024 * 1024,  # ограничение на 100 Мб
+                                    )
             )
             logging.info(f"Поток {self.stream_name} создан.")
 
@@ -111,9 +114,9 @@ class NATSWrapper:
         "Push подписка на поток"
         js = await self._get_js()
 
-        await js.subscribe(self.subject_name, 
-                           durable_name, 
-                           cb=callback_func, 
-                           stream=self.stream_name, 
-                           manual_ack=True, 
+        await js.subscribe(self.subject_name,
+                           durable_name,
+                           cb=callback_func,
+                           stream=self.stream_name,
+                           manual_ack=True,
                            deliver_policy=DeliverPolicy.NEW)
