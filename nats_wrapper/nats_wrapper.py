@@ -3,6 +3,8 @@ from functools import wraps
 from nats.aio.client import Client as NATS
 from nats.js.client import JetStreamContext
 from nats.js.api import StreamConfig
+from nats.js.errors import NotFoundError
+from nats.js.api import DeliverPolicy
 import logging
 from typing import Callable
 
@@ -16,9 +18,10 @@ class NATSWrapper:
         self.nats_url = "nats://nats:4222"
         self.nc = NATS()
         self.js: JetStreamContext | None = None
+        self.nats_errors: list[Exception] = []
 
     @staticmethod
-    def retry(failure_text : str):
+    def retry(failure_text: str):
         def decorator(func):
             @wraps(func)
             async def wrapper(*args, **kwargs):
@@ -28,31 +31,50 @@ class NATSWrapper:
                     try:
                         return await func(*args, **kwargs)
                     except Exception as e:
-                        logging.info(failure_text + f" {current_retry}/{retries_amount}")
+                        logging.info(failure_text +
+                                     f" {current_retry}/{retries_amount}")
                         if current_retry == retries_amount:
                             raise
                         current_retry += 1
                         await asyncio.sleep(1)
             return wrapper
         return decorator
-            
+
+    async def _disconnected(self):
+        logging.info("Потеряно соединение с NATS")
+
+    async def _reconnected(self):
+        logging.info("Подключение к NATS восстановлено")
+        for e in self.nats_errors:
+            logging.info("Ошибки NATS при последнем разрыве:")
+            logging.info(f"{type(e)}:{e}")
+        self.nats_errors.clear()
+
+    async def _on_error(self, e: Exception):
+        self.nats_errors.append(e)
+
     @retry("Ошибка подключения к NATS")
     async def connect(self):
         "Подключение к NATS JetStream"
-        await self.nc.connect(servers=[self.nats_url])
+        self.nats_errors.clear()
+        await self.nc.connect(servers=[self.nats_url],
+                              disconnected_cb=self._disconnected,
+                              reconnected_cb=self._reconnected,
+                              error_cb=self._on_error,
+                              max_reconnect_attempts=-1)
         self.js = self.nc.jetstream()
         logging.info("Подключение к NATS успешно")
 
         await self._initialize_stream(self.stream_name, self.subject_name)
 
-    async def _get_js(self):
+    async def _get_js(self) -> JetStreamContext:
         "Получение объекта jetstream"
         if self.js is None:
             logging.info("Нет подключения к JetStream. Подключаюсь...")
             await self.connect()
             if self.js is None:
                 raise Exception("Не удалось подключиться к NATS JetStream")
-        
+
         return self.js
 
     async def _initialize_stream(self, name: str, subject: str):
@@ -62,7 +84,7 @@ class NATSWrapper:
             js = await self._get_js()
             await js.stream_info(name)
             logging.info(f"Поток {self.stream_name} найден.")
-        except Exception:
+        except NotFoundError:
             logging.info(f"Поток {self.stream_name} не найден. Создаю.")
             js = await self._get_js()
             await js.add_stream(
@@ -72,7 +94,12 @@ class NATSWrapper:
 
     async def close(self):
         "Закрытие соединения с NATS"
-        await self.nc.drain()
+        try:
+            await self.nc.drain()
+        except Exception as e:
+            logging.warning(
+                "Не удалось мягко закрыть соединение с NATS. Отключаюсь жестко")
+            await self.nc.close()
 
     async def publish(self, text: str):
         "Публикация текста в поток jetstream"
@@ -84,4 +111,9 @@ class NATSWrapper:
         "Push подписка на поток"
         js = await self._get_js()
 
-        await js.subscribe(self.subject_name, durable_name, cb=callback_func, stream=self.stream_name)
+        await js.subscribe(self.subject_name, 
+                           durable_name, 
+                           cb=callback_func, 
+                           stream=self.stream_name, 
+                           manual_ack=True, 
+                           deliver_policy=DeliverPolicy.NEW)
