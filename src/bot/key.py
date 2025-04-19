@@ -1,5 +1,6 @@
 import os
 
-TOKEN = os.getenv("TOKEN")
-chat_id = os.getenv("CHAT_ID")
+# TODO: переделать для получения из БД
+TOKEN: str = os.getenv("TOKEN") # type: ignore
+chat_id: str = os.getenv("CHAT_ID") # type: ignore
 api_url = f"https://{ os.getenv("PAGEKITE_URL") }.pagekite.me/status"

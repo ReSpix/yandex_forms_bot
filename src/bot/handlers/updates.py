@@ -35,7 +35,7 @@ async def set_time(message: Message):
 
 
 @dp.message(Command("setnotify"))
-async def set_time(message: Message):
+async def set_notify(message: Message):
     if not await user_in_chat(message):
         return
     CONFIG["notify"] = not CONFIG["notify"]
@@ -52,7 +52,7 @@ async def set_time(message: Message):
 
 
 @dp.message(Command("setweekends"))
-async def set_time(message: Message):
+async def set_weekends(message: Message):
     if not await user_in_chat(message):
         return
     CONFIG["skip_weekends"] = not CONFIG["skip_weekends"]
@@ -69,7 +69,7 @@ async def set_time(message: Message):
 
 
 @dp.message(Command("showsettings"))
-async def set_time(message: Message):
+async def whow_settings(message: Message):
     if not await user_in_chat(message):
         return
     await message.answer(

@@ -1,5 +1,5 @@
 from aiogram import F
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, Message
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from ..tgbot import dp, user_in_chat_callback
@@ -7,7 +7,7 @@ from ..utils import get_new_text, save_response
 
 
 @dp.callback_query(F.data == "take")
-async def accept_task(callback: CallbackQuery):
+async def in_work_task(callback: CallbackQuery):
     if not await user_in_chat_callback(callback):
         return
     button_call = InlineKeyboardButton(text="Позвонил клиенту", callback_data="call")
@@ -17,6 +17,7 @@ async def accept_task(callback: CallbackQuery):
     inline_kb = InlineKeyboardMarkup(
         inline_keyboard=[[button_call], [button_accept], [button_refuse]]
     )
+    assert isinstance(callback.message, Message)
     await callback.message.edit_text(
         get_new_text(callback.message.text, f"Взято в работу"),
         reply_markup=inline_kb,
@@ -25,13 +26,14 @@ async def accept_task(callback: CallbackQuery):
 
 
 @dp.callback_query(F.data == "call")
-async def refure_task(callback: CallbackQuery):
+async def call_task(callback: CallbackQuery):
     if not await user_in_chat_callback(callback):
         return
     button_accept = InlineKeyboardButton(text="Клиент принял", callback_data="accept")
     button_refuse = InlineKeyboardButton(text="Отказ клиента", callback_data="refuse")
 
     inline_kb = InlineKeyboardMarkup(inline_keyboard=[[button_accept], [button_refuse]])
+    assert isinstance(callback.message, Message)
     await callback.message.edit_text(
         get_new_text(callback.message.text, f"Позвонили клиенту"),
         reply_markup=inline_kb,
@@ -40,9 +42,10 @@ async def refure_task(callback: CallbackQuery):
 
 
 @dp.callback_query(F.data == "accept")
-async def refure_task(callback: CallbackQuery):
+async def accept_task(callback: CallbackQuery):
     if not await user_in_chat_callback(callback):
         return
+    assert isinstance(callback.message, Message)
     await callback.message.edit_text(
         get_new_text(callback.message.text, f"Клиент принял работу")
     )
@@ -50,9 +53,10 @@ async def refure_task(callback: CallbackQuery):
 
 
 @dp.callback_query(F.data == "refuse")
-async def refure_task(callback: CallbackQuery):
+async def refuse_task(callback: CallbackQuery):
     if not await user_in_chat_callback(callback):
         return
+    assert isinstance(callback.message, Message)
     await callback.message.edit_text(
         get_new_text(callback.message.text, f"Клиент отказался")
     )

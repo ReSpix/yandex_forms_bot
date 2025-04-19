@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator, validator
 from datetime import datetime
 
 Base = declarative_base()
@@ -46,7 +46,7 @@ class RequestView(BaseModel):
     received_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         
         
 class ResponseView(BaseModel):
@@ -57,7 +57,15 @@ class ResponseView(BaseModel):
     response_type: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+    @field_validator('response_type', mode='before')
+    def convert_response_type(cls, value):
+        if isinstance(value, ResponseType):
+            return value.type_text
+        if isinstance(value, TypeView):
+            return value.type_text
+        return value
         
     
 class TypeView(BaseModel):
@@ -65,4 +73,4 @@ class TypeView(BaseModel):
     type_text: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True

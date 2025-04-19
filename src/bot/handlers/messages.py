@@ -26,7 +26,7 @@ async def command_start_handler(message: Message) -> None:
 
 
 @dp.message(Command("status"))
-async def command_start_handler(message: Message) -> None:
+async def command_status_handler(message: Message) -> None:
     if not await user_in_chat(message):
         return
     await message.answer(f"(1/2) Бот: Активен ✅")
@@ -41,7 +41,7 @@ async def command_start_handler(message: Message) -> None:
 
 
 @dp.message(Command("explain"))
-async def command_start_handler(message: Message) -> None:
+async def command_explain_handler(message: Message) -> None:
     if not await user_in_chat(message):
         return
     await message.answer(

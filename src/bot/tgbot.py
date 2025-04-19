@@ -3,6 +3,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from .key import TOKEN, chat_id
 
+from aiogram.types import User
 from aiogram.types.chat_member_owner import ChatMemberOwner
 from aiogram.types.chat_member_administrator import ChatMemberAdministrator
 from aiogram.types.chat_member_member import ChatMemberMember
@@ -20,6 +21,7 @@ bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
 
 async def user_in_chat(message: types.Message):
+    assert isinstance(message.from_user, User)
     user_id = message.from_user.id
     try:
         member = await bot.get_chat_member(chat_id=chat_id, user_id=user_id)
