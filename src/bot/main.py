@@ -2,9 +2,9 @@ import asyncio
 import logging
 import sys
 
-from scheduler import activate_scheduler
-from tgbot import dp, bot
-import handlers
+from .scheduler import activate_scheduler
+from .tgbot import dp, bot
+from . import handlers
 
 
 async def main() -> None:

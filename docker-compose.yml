@@ -1,46 +1,50 @@
 services:
-  bot:
-    build: ./bot
-    container_name: bot
-    environment:
-      - TZ=Asia/Vladivostok
-    volumes:
-    - bot_settings:/app/settings
-    restart: always
-    env_file:
-      - .env
+  # bot:
+  #   build: ./bot
+  #   container_name: bot
+  #   environment:
+  #     - TZ=Asia/Vladivostok
+  #   volumes:
+  #   - bot_settings:/app/settings
+  #   restart: always
+  #   env_file:
+  #     - .env
 
-  asana:
-    build:
-      dockerfile: ./asana/Dockerfile
-      context: .
-    restart: always
-    container_name: asana
+  # asana:
+  #   build:
+  #     dockerfile: ./asana/Dockerfile
+  #     context: .
+  #   restart: always
+  #   container_name: asana
 
-  nats:
-    image: nats@sha256:031f9a7ed1e08524b3dff604bfaee5177baa95c25f039822b8d224a42373be4e
-    container_name: nats
-    ports:
-      - "4222:4222"  # основной порт клиента
-      - "8222:8222"  # веб-интерфейс/мониторинг
-    command: >
-      -js
-      -m 8222
-      -sd /data
-    restart: always
-    volumes: 
-      - nats_jetstream:/data
+  # nats:
+  #   image: nats@sha256:031f9a7ed1e08524b3dff604bfaee5177baa95c25f039822b8d224a42373be4e
+  #   container_name: nats
+  #   ports:
+  #     - "4222:4222"  # основной порт клиента
+  #     - "8222:8222"  # веб-интерфейс/мониторинг
+  #   command: >
+  #     -js
+  #     -m 8222
+  #     -sd /data
+  #   restart: always
+  #   volumes: 
+  #     - nats_jetstream:/data
 
-  api:
-    container_name: fastapi
+  main:
+    container_name: main
     build: 
-      dockerfile: ./api/Dockerfile
+      dockerfile: ./src/Dockerfile
       context: .
     ports:
       - "8000:8000"
     volumes:
-      - bot_api_db:/app/db
+      - database:/app/db
+    environment:
+      - TZ=Asia/Vladivostok
     restart: always
+    env_file:
+      - .env
 
   ssh-tunnel:
     build: ./ssh_tunnel
@@ -54,9 +58,9 @@ services:
       # ssh -o StrictHostKeyChecking=no -R testyandexformstgbot:80:api:8000 serveo.net
 
       # (recomended) PageKite
-      --defaults --service_on=http:yandexformstestbot.pagekite.me:api:8000:cc6f9ka33aza36cka342x873z7z3ced2 --logfile=./logs.txt
+      --defaults --service_on=http:yandexformstestbot.pagekite.me:main:8000:cc6f9ka33aza36cka342x873z7z3ced2 --logfile=./logs.txt
 
 volumes:
-  bot_api_db:
+  database:
   bot_settings:
-  nats_jetstream:
+  # nats_jetstream:

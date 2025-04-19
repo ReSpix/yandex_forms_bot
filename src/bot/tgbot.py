@@ -1,7 +1,7 @@
 from aiogram import Bot, Dispatcher, types
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from key import TOKEN, chat_id
+from .key import TOKEN, chat_id
 
 from aiogram.types.chat_member_owner import ChatMemberOwner
 from aiogram.types.chat_member_administrator import ChatMemberAdministrator

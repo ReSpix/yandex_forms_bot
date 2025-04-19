@@ -1,10 +1,10 @@
 from aiogram.filters import Command
 from aiogram.types import Message
-from scheduler import update_scheduler
+from ..scheduler import update_scheduler
 import re
 
-from tgbot import dp, user_in_chat
-from settings import CONFIG, save_config
+from ..tgbot import dp, user_in_chat
+from ..settings import CONFIG, save_config
 
 
 @dp.message(Command("settime"))

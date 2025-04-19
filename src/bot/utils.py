@@ -1,7 +1,8 @@
 from datetime import datetime
 import requests
 from urllib.parse import quote
-from settings import CONFIG
+from .settings import CONFIG
+from core import on_new_response
 
 messages_text = [
     "Взято в работу",
@@ -34,10 +35,11 @@ def get_original_text(current_text):
 
 def save_response(text, username, type):
     text = get_original_text(text)
-    text = quote(text)
-    url = f"http://api:8000/response/{text}/{username}/{type}"
-    res = requests.get(url)
-    return res.text
+    # text = quote(text)
+    on_new_response(text, username, type)
+    # url = f"http://api:8000/response/{text}/{username}/{type}"
+    # res = requests.get(url)
+    # return res.text
 
 
 def is_notify_skip():

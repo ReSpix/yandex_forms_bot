@@ -1,6 +1,6 @@
-from reminders import notify
-from key import api_url
-from tgbot import dp, bot, user_in_chat
+from ..reminders import notify
+from ..key import api_url
+from ..tgbot import dp, bot, user_in_chat
 import requests
 from aiogram.types import Message
 from aiogram.filters import CommandStart, Command

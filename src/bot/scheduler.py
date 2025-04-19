@@ -1,6 +1,6 @@
-from settings import CONFIG, save_config
+from .settings import CONFIG, save_config
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from reminders import notify_scheduler
+from .reminders import notify_scheduler
 
 
 scheduler = AsyncIOScheduler()

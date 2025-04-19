@@ -2,8 +2,8 @@ from aiogram import F
 from aiogram.types import CallbackQuery
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from tgbot import dp, user_in_chat_callback
-from utils import get_new_text, save_response
+from ..tgbot import dp, user_in_chat_callback
+from ..utils import get_new_text, save_response
 
 
 @dp.callback_query(F.data == "take")
@@ -36,7 +36,7 @@ async def refure_task(callback: CallbackQuery):
         get_new_text(callback.message.text, f"Позвонили клиенту"),
         reply_markup=inline_kb,
     )
-    res = save_response(callback.message.text, callback.from_user.username, "call")
+    save_response(callback.message.text, callback.from_user.username, "call")
 
 
 @dp.callback_query(F.data == "accept")
