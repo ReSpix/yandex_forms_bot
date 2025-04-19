@@ -1,5 +1,4 @@
 from datetime import datetime
-import requests
 from urllib.parse import quote
 from .settings import CONFIG
 from core import on_new_response
