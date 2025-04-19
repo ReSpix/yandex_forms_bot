@@ -33,9 +33,7 @@ services:
 
   main:
     container_name: main
-    build: 
-      dockerfile: ./src/Dockerfile
-      context: .
+    build: ./src
     ports:
       - "8000:8000"
     volumes:

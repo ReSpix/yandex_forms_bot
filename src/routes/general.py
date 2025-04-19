@@ -7,7 +7,6 @@ from models import (
 )
 from database import get_db
 from typing import List
-from nats_wrapper import nats_wrapper as nats
 import logging
 from asana_helper import publish_asana_task
 from core import on_new_response, get_notify
@@ -16,7 +15,7 @@ general_router = APIRouter()
 
 
 @general_router.get("/receive/{text}")
-async def receive(text: str, db: Session = Depends(get_db), background_tasks : BackgroundTasks = BackgroundTasks()):
+async def receive(text: str, db: Session = Depends(get_db)):
     logging.info(
         "Получены данные:\n--------Начало--------\n%s\n--------Конец--------", text)
     new_request = Request(text=text)
@@ -24,7 +23,6 @@ async def receive(text: str, db: Session = Depends(get_db), background_tasks : B
     db.commit()
     db.refresh(new_request)
 
-    # background_tasks.add_task(nats.publish, text)
     publish_asana_task(text)
 
     return {"Received succesfully"}

@@ -2,7 +2,6 @@ import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from database import init_db
-from nats_wrapper import nats_wrapper as nats
 import logging
 from sys import stdout
 from routes import main_router
@@ -19,7 +18,6 @@ async def lifespan(app: FastAPI):
     asyncio.create_task(bot_main())
     logging.info("Инициализация завершена")
     yield
-    await nats.close()
 
 
 app = FastAPI(lifespan=lifespan)
