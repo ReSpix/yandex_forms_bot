@@ -1,10 +1,19 @@
+import asyncio
 import asana
 from asana.rest import ApiException
 import logging
 
-configuration = asana.Configuration()
-configuration.access_token = '2/1209973749938053/1209975213456219:b98001676e7b3db5863ccf056a56bb2f'
-api_client = asana.ApiClient(configuration)
+
+configuration = None
+api_client = None
+
+
+def init():
+    global configuration
+    global api_client
+    configuration = asana.Configuration()
+    configuration.access_token = '2/1209973749938053/1209975213456219:b98001676e7b3db5863ccf056a56bb2f'
+    api_client = asana.ApiClient(configuration)
 
 
 def put_to_section(task_gid):
@@ -21,7 +30,9 @@ def put_to_section(task_gid):
             f"Ошибка перемещения задачи {task_gid} в секцию {section_gid}: {e}")
 
 
-def publish_asana_task(text: str):
+def _publish_asana_task(text: str):
+    if api_client is None:
+        init()
     tasks_api_instance = asana.TasksApi(api_client)
     body = {
         "data": {
@@ -39,3 +50,9 @@ def publish_asana_task(text: str):
         put_to_section(task['gid'])
     except ApiException as e:
         logging.info("Exception when calling TasksApi->create_task: %s\n" % e)
+
+
+async def publish_asana_task(text: str):
+    loop = asyncio.get_running_loop()
+    # По умолчанию используется ThreadPoolExecutor
+    return await loop.run_in_executor(None, _publish_asana_task, text)
