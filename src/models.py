@@ -23,6 +23,7 @@ class ResponseType(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     type_text = Column(String, nullable=False)
+    pretty_text = Column(String, nullable=False)
 
     responses = relationship("Response", back_populates="response_type")
 

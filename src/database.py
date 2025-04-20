@@ -20,11 +20,11 @@ def init_db():
 
 
 def initialize_response_types(db):
-    response_types = ["take", "call", "accept", "refuse"]
+    response_types = [["take", "В работе"], ["call", "Позвонили клиенту"], ["accept", "Клиент принял"], ["refuse", "Клиент отказался"]]
     existing_types = db.query(ResponseType).count()
     if existing_types == 0:
         for type_text in response_types:
-            response_type = ResponseType(type_text=type_text)
+            response_type = ResponseType(type_text=type_text[0], pretty_text=type_text[1])
             db.add(response_type)
         db.commit()
 

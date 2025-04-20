@@ -1,11 +1,60 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Отслеживание нарядов</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+        }
+        table {
+          font-family: Arial, Helvetica, sans-serif;
+          border-collapse: collapse;
+        }
+        
+        td, th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+
+        td.text {
+            width: 300px;
+        }
+        
+        tr:nth-child(even){background-color: #f2f2f2;}
+        
+        tr:hover {background-color: #ddd;}
+        
+        th {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          text-align: left;
+          background-color: #04AA6D;
+          color: white;
+        }
+        </style>
 </head>
+
 <body>
-    <h1>Добро пожаловать в систему отслеживания рапределения задач по нарядам</h1>
+    <table>
+        <tr>
+            <th>Данные по наряду</th>
+            <th>Статус</th>
+        </tr>
+        {% for ticket in tickets%}
+        <tr>
+            <td class="text">{{ ticket[0].text | replace('\n', '<br>') | safe }}</td>
+            {% if ticket[2] is not none %}
+            <td>{{ ticket[2].pretty_text }}</td>
+            {% else %}
+            <td>Без статуса</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
 </body>
+
 </html>
