@@ -32,7 +32,7 @@ async def command_status_handler(message: Message) -> None:
     await message.answer(f"(1/2) Бот: Активен ✅")
     service_status = "Неактивен ❌"
     try:
-        res = requests.get(api_url)
+        res = requests.get(api_url, timeout=10)
         if "ok" in res.text:
             service_status = "Активен ✅"
     except:
