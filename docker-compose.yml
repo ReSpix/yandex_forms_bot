@@ -38,16 +38,19 @@ services:
       - "8000:8000"
     volumes:
       - database:/app/db
+      - ./src:/app
     environment:
       - TZ=Asia/Vladivostok
     restart: always
     env_file:
       - .env
+    command: --reload
 
   ssh-tunnel:
     build: ./ssh_tunnel
     container_name: ssh_tunnel
     restart: always
+    stop_grace_period: 2s
     command:
       # localhost.run: randomly changing url
       # ssh -o StrictHostKeyChecking=no -R 80:api:8000 nokey@localhost.run
