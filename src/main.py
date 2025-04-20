@@ -7,19 +7,18 @@ import logging
 from sys import stdout
 from api_routes import api_router
 from web import web_router
-from bot.main import main as bot_main
+import bot.main as bot
 
 logging.basicConfig(level=logging.INFO, stream=stdout,
-                    format="[%(levelname)s] %(message)s")
+                    format="%(asctime)s [%(levelname)s] %(message)s")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logging.info("Начинаю инициализацию")
     init_db()
-    asyncio.create_task(bot_main())
-    logging.info("Инициализация завершена")
+    asyncio.create_task(bot.main())
     yield
+    await bot.shutdown()
 
 
 app = FastAPI(lifespan=lifespan)

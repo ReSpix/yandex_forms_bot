@@ -19,3 +19,6 @@ def activate_scheduler():
     scheduler.add_job(
         notify_scheduler, "cron", hour=CONFIG["hour"], minute=CONFIG["minute"])
     scheduler.start()
+
+def shutdown_scheduler():
+    scheduler.shutdown()
