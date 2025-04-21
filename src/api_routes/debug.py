@@ -3,8 +3,8 @@ from fastapi import APIRouter, Depends
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, Response as fa_Response
 from models import (
-    Request,
-    RequestView,
+    Ticket,
+    TicketView,
     ResponseType,
     Response,
     TypeView,
@@ -17,10 +17,10 @@ from database import get_db
 debug_router = APIRouter(prefix='/debug')
 
 
-@debug_router.get("/requests/", response_model=List[RequestView])
+@debug_router.get("/requests/", response_model=List[TicketView])
 def get_requests(db: Session = Depends(get_db)):
-    requests = db.query(Request).all()
-    return pretty_format(requests, RequestView)
+    requests = db.query(Ticket).all()
+    return pretty_format(requests, TicketView)
 
 
 @debug_router.get("/types/", response_model=List[TypeView])

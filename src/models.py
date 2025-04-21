@@ -8,14 +8,14 @@ from datetime import datetime
 Base = declarative_base()
 
 
-class Request(Base):
-    __tablename__ = "requests"
+class Ticket(Base):
+    __tablename__ = "tickets"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     text = Column(String, nullable=False)
     received_at = Column(DateTime, default=datetime.now, nullable=False)
 
-    responses = relationship("Response", back_populates="request")
+    responses = relationship("Response", back_populates="ticket")
 
 
 class ResponseType(Base):
@@ -32,16 +32,16 @@ class Response(Base):
     __tablename__ = "responses"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    request_id = Column(Integer, ForeignKey("requests.id"), nullable=False)
+    ticket_id = Column(Integer, ForeignKey("tickets.id"), nullable=False)
     employee_name = Column(String, nullable=False)
     responded_at = Column(DateTime, default=datetime.now, nullable=False)
     response_type_id = Column(Integer, ForeignKey("response_types.id"), nullable=False)
 
-    request = relationship("Request", back_populates="responses")
+    ticket = relationship("Ticket", back_populates="responses")
     response_type = relationship("ResponseType", back_populates="responses")
 
 
-class RequestView(BaseModel):
+class TicketView(BaseModel):
     id: int
     text: str
     received_at: datetime

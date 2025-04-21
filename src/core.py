@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import aliased
 from models import (
-    Request,
+    Ticket,
     ResponseType,
     Response
 )
@@ -11,7 +11,7 @@ def on_new_response(
     text: str, name: str, response_type_text: str,
 ):
     db = SessionLocal()
-    request = db.query(Request).filter(Request.text == text).first()
+    request = db.query(Ticket).filter(Ticket.text == text).first()
 
     if not request:
         # TODO: создавать request
@@ -27,7 +27,7 @@ def on_new_response(
         raise ValueError("Response type not found")
 
     new_response = Response(
-        request_id=request.id, employee_name=name, response_type_id=response_type.id
+        ticket_id=request.id, employee_name=name, response_type_id=response_type.id
     )
     db.add(new_response)
     db.commit()
@@ -39,8 +39,8 @@ def get_notify():
     response_alias = aliased(Response)
 
     requests = (
-        db.query(Request)
-        .outerjoin(response_alias, Request.id == response_alias.request_id)
+        db.query(Ticket)
+        .outerjoin(response_alias, Ticket.id == response_alias.ticket_id)
         .filter(response_alias.id.is_(None))
         .all()
     )

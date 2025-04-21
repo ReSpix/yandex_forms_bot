@@ -1,5 +1,5 @@
 from fastapi.routing import APIRouter
-from fastapi import APIRouter, Request as fa_Request, Depends
+from fastapi import APIRouter, Request as Request, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session, aliased
@@ -7,7 +7,7 @@ from sqlalchemy import desc, func, select
 from database import SessionLocal
 import logging
 from models import (
-    Request,
+    Ticket,
     ResponseType,
     Response
 )
@@ -17,17 +17,17 @@ templates = Jinja2Templates(directory="web/templates")
 
 
 @web_router.get("/", response_class=HTMLResponse)
-async def index(request: fa_Request):
+async def index(request: Request):
     db = SessionLocal()
     last_response_subquery = (
         select(
             Response.id.label("response_id"),
-            Response.request_id,
+            Response.ticket_id,
             Response.employee_name,
             Response.responded_at,
             Response.response_type_id,
             func.row_number().over(
-                partition_by=Response.request_id,
+                partition_by=Response.ticket_id,
                 order_by=Response.responded_at.desc()
             ).label("rn")
         ).subquery()
@@ -39,10 +39,10 @@ async def index(request: fa_Request):
 
     # Основной запрос: Request + последний Response + ResponseType
     query = (
-        select(Request, last_response_alias, response_type_alias)
+        select(Ticket, last_response_alias, response_type_alias)
         .outerjoin(
             last_response_alias,
-            (last_response_subquery.c.request_id == Request.id) &
+            (last_response_subquery.c.ticket_id == Ticket.id) &
             (last_response_subquery.c.rn == 1)
         )
         .outerjoin(
