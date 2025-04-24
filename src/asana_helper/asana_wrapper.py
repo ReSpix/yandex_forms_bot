@@ -1,4 +1,6 @@
 import asyncio
+import json
+from multiprocessing.pool import ApplyResult
 import asana
 from asana.rest import ApiException
 import logging
@@ -14,6 +16,28 @@ def init():
     configuration = asana.Configuration()
     configuration.access_token = '2/1209973749938053/1209975213456219:b98001676e7b3db5863ccf056a56bb2f'
     api_client = asana.ApiClient(configuration)
+
+sync = ''
+
+def get_events():
+    global sync
+    if api_client is None:
+        init()
+    event_client = asana.EventsApi(api_client)
+    res = None
+    try:
+        res = event_client.get_events("1209973648210833", opts={'sync': sync}, async_req=True)
+        assert isinstance(res, ApplyResult)
+        res = res.get()
+        logging.info("Start")
+        logging.info(res['data'])
+        logging.info(res['sync'])
+        sync = res['sync']
+        logging.info("End")
+    except ApiException as e:
+        logging.info(f"Errror: {e.status}")
+        json_str = json.loads(e.body.decode('utf-8'))
+        sync = json_str['sync']
 
 
 def put_to_section(task_gid):
